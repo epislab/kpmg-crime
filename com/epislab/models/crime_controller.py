@@ -1,5 +1,5 @@
 from com.epislab.models.crime_service import CrimeService
-from com.epislab.models.data_reader import Dataset
+from com.epislab.models.dataset import Dataset
 
 
 class CrimeController:
