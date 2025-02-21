@@ -4,31 +4,67 @@ from com.epislab.models.data_reader import DataReader
 from com.epislab.models.dataset import Dataset
 
 class CrimeService:
+
     dataset = Dataset()
     reader = DataReader()
-    def csv_model(self, fname) -> object:
+
+    def new_model(self, fname) -> object:
         reader = self.reader
-        print(f"😎🥇🐰컨텍스트 경로 : {reader.context}")
         print(f"😎🥇🐰파일명 : {fname}")
         reader.fname = fname
-        return reader.csv_to_dframe()
-    
-    def xls_model(self, fname) -> object:
-        reader = self.reader
-        print(f"😎🥇🐰컨텍스트 경로 : {reader.context}")
-        print(f"😎🥇🐰파일명 : {fname}")
-        reader.fname = fname
-        return reader.xls_to_dframe()
+        if fname.endswith('csv'):
+            return reader.csv_to_dframe()
+        elif fname.endswith('xls'):
+            return reader.xls_to_dframe(header=2, usecols='B,D,G,J,N')
     
     def preprocess(self, *args) -> object:
         print(f"------------모델 전처리 시작-----------")
         temp = []
         for i in list(args):
-            print(f"args 값 출력: {i}")
+            # print(f"args 값 출력: {i}")
             temp.append(i)
  
         this = self.dataset
-        this.cctv = self.csv_model(temp[0])
-        this.crime = self.csv_model(temp[1])
-        # this.pop = self.xls_model(temp[2])
+        this.cctv = self.new_model(temp[0])
+        this = self.cctv_ratio(this)
+        this.crime = self.new_model(temp[1])
+        this = self.crime_ratio(this)
+        this.pop = self.new_model(temp[2])
+        this = self.pop_ratio(this)
         return this
+    
+    @staticmethod
+    def cctv_ratio(this) -> object:
+        this.cctv = this.cctv.drop(['2013년도 이전', '2014년', '2015년', '2016년'], axis = 1)
+        print(f"CCTV 데이터 헤드: {this.cctv.head()}")
+        cctv = this.cctv
+        return this
+    
+    @staticmethod
+    def crime_ratio(this) -> object:
+        print(f"CRIME 데이터 헤드: {this.crime.head()}")
+        crime = this.crime
+        station_names = [] # 경찰서 관서명 리스트
+        for name in crime['관서명']:
+            station_names.append('서울' + str(name[:-1]) + '경찰서')
+        print(f"🔥💧경찰서 관서명 리스트: {station_names}")
+        station_addrs = []
+        station_lats = []
+        station_lngs = []
+        gmaps = DataReader.create_gmaps()
+        return this
+    
+    @staticmethod
+    def pop_ratio(this) -> object:
+        pop = this.pop
+        pop.rename(columns = {
+            # pop.columns[0] : '자치구',  # 변경하지 않음
+            pop.columns[1]: '인구수',   
+            pop.columns[2]: '한국인',
+            pop.columns[3]: '외국인',
+            pop.columns[4]: '고령자',}, inplace = True)
+        print(f"POP 데이터 헤드: {this.pop.head()}")
+
+     
+        return this
+    
