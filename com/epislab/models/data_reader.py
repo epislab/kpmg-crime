@@ -41,4 +41,4 @@ class DataReader:
     
     @staticmethod
     def create_gmaps():
-        return googlemaps.Client(key='..')
+        return googlemaps.Client(key='AIzaSyBuXsJSJyGqNFXToPx9STCCfMLfghiU7cI')
