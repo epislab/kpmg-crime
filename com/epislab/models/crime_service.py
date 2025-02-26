@@ -19,24 +19,10 @@ class CrimeService:
     
     def preprocess(self, *args) -> object:
         print(f"------------모델 전처리 시작-----------")
-        temp = []
+        this = self.dataset
         for i in list(args):
             # print(f"args 값 출력: {i}")
-            temp.append(i)
- 
-        this = self.dataset
-        print(f"*"*20,"🔥1.CCTV 편집 ")
-        this.cctv = self.create_matrix(temp[0])
-        this = self.update_cctv(this)
-        this = self.save_object_to_csv(this, os.path.join(save_dir, 'cctv_in_seoul.csv'))
-        print(f"*"*20,"🐬1. CRIME 편집 ")
-        this.crime = self.create_matrix(temp[1])
-        this = self.update_crime(this) 
-        this = self.save_object_to_csv(this, os.path.join(save_dir, 'crime_in_seoul.csv'))
-        print(f"*"*20,"🌥️3. POP 편집 ")
-        this.pop = self.create_matrix(temp[2])
-        this = self.update_pop(this)
-        this = self.save_object_to_csv(this, os.path.join(save_dir, 'pop_in_seoul.xls'))
+            self.save_object_to_csv(this, os.path.join(save_dir, i))
         return this
     
     def create_matrix(self, fname) -> object:
@@ -48,23 +34,28 @@ class CrimeService:
         elif fname.endswith('xls'):
             return reader.xls_to_dframe(header=2, usecols='B,D,G,J,N')
     
+    def save_object_to_csv(self, this, fname) -> object:
 
-    def save_object_to_csv(self, this, param_path) -> object:
-        print(f"⛔save_csv 처음 : {param_path}")
-        param_path = os.path.join(save_dir, 'cctv_in_seoul.csv')
-        if not os.path.exists(param_path) and  param_path == "cctv_in_seoul.csv":
-            print(f"⛔1-cctv_in_seoul.csv: {param_path}")
+        print(f"🌱save_csv 실행 : {fname}")
+
+        if not os.path.exists(fname) and  fname == "cctv_in_seoul.csv":
+            this.cctv = self.create_matrix(fname)
             this = self.update_cctv(this)
-            this.cctv.to_csv(os.path.join(save_dir, 'cctv_in_seoul.csv'), index=False)
+            this.cctv.to_csv(os.path.join(save_dir, fname), index=False)
             
-        elif os.path.exists(param_path) and  param_path == "crime_in_seoul.csv":
-            print(f"⛔2-crime_in_seoul.csv: {param_path}")
-            this.crime.to_csv(os.path.join(save_dir, 'crime_in_seoul.csv'), index=False)
-        elif os.path.exists(param_path) and  param_path == "pop_in_seoul.xls":
-            print(f"⛔3-pop_in_seoul.xls: {param_path}")
-            this.pop.to_csv(os.path.join(save_dir, 'pop_in_seoul.csv'), index=False)
+        elif os.path.exists(fname) and  fname == "crime_in_seoul.csv":
+            this.crime = self.create_matrix(fname)
+            this = self.update_crime(this) 
+            this.crime.to_csv(os.path.join(save_dir, fname), index=False)
+
+        elif os.path.exists(fname) and  fname == "pop_in_seoul.xls":
+            this.pop = self.create_matrix(fname)
+            this = self.update_pop(this)
+            this.pop.to_csv(os.path.join(save_dir, fname), index=False)
+
         else:
-            print(f"파일이 이미 존재합니다. {param_path}")
+            print(f"파일이 이미 존재합니다. {fname}")
+
         return this
     
     
