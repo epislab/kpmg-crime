@@ -125,24 +125,6 @@ class CrimeService:
     def update_police(this) -> object:
         print(f"------------ update_police 실행 ------------")
         crime = this.crime
-        station_names = [] # 경찰서 관서명 리스트
-        for name in crime['관서명']:
-            station_names.append('서울' + str(name[:-1]) + '경찰서')
-        print(f"🔥💧경찰서 관서명 리스트: {station_names}")
-        station_addrs = []
-
-        gmaps = GoogleMapSingleton() # 구글맵 객체 생성
-        for name in station_names:
-            tmp = gmaps.geocode(name, language = 'ko')
-            station_addrs.append(tmp[0].get("formatted_address"))
-  
-        gu_names = []
-        for addr in station_addrs:
-            tmp = addr.split()
-            tmp_gu = [gu for gu in tmp if gu[-1] == '구'][0]
-            gu_names.append(tmp_gu)
-        crime['자치구'] = gu_names
-
         crime = crime.groupby("자치구").sum().reset_index()
         crime = crime.drop(columns=["관서명"])
 
