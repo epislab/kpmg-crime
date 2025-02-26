@@ -15,7 +15,6 @@ class CrimeService:
         # 현재 스크립트의 절대 경로 가져오기
         # 저장할 디렉토리 설정 (스크립트 위치 기준)
 
-
     
     def preprocess(self, *args) -> object:
         print(f"------------모델 전처리 시작-----------")
@@ -37,23 +36,19 @@ class CrimeService:
     def save_object_to_csv(self, this, fname) -> object:
 
         print(f"🌱save_csv 실행 : {fname}")
-
         full_name = os.path.join(save_dir, fname)
 
         if not os.path.exists(full_name) and  fname == "cctv_in_seoul.csv":
             this.cctv = self.create_matrix(fname)
             this = self.update_cctv(this)
-            this.cctv.to_csv(full_name, index=False)
             
         elif not os.path.exists(full_name) and  fname == "crime_in_seoul.csv":
             this.crime = self.create_matrix(fname)
             this = self.update_crime(this) 
-            this.crime.to_csv(full_name, index=False)
 
         elif not os.path.exists(full_name) and  fname == "pop_in_seoul.xls":
             this.pop = self.create_matrix(fname)
             this = self.update_pop(this)
-            this.pop.to_csv(os.path.join(save_dir, "pop_in_seoul.csv"), index=False)
 
         else:
             print(f"파일이 이미 존재합니다. {fname}")
