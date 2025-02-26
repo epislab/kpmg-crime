@@ -22,7 +22,7 @@ class CrimeService:
         this = self.dataset
         for i in list(args):
             # print(f"args 값 출력: {i}")
-            self.save_object_to_csv(this, os.path.join(save_dir, i))
+            self.save_object_to_csv(this, i)
         return this
     
     def create_matrix(self, fname) -> object:
@@ -38,20 +38,22 @@ class CrimeService:
 
         print(f"🌱save_csv 실행 : {fname}")
 
-        if not os.path.exists(fname) and  fname == "cctv_in_seoul.csv":
+        full_name = os.path.join(save_dir, fname)
+
+        if not os.path.exists(full_name) and  fname == "cctv_in_seoul.csv":
             this.cctv = self.create_matrix(fname)
             this = self.update_cctv(this)
-            this.cctv.to_csv(os.path.join(save_dir, fname), index=False)
+            this.cctv.to_csv(full_name, index=False)
             
-        elif os.path.exists(fname) and  fname == "crime_in_seoul.csv":
+        elif not os.path.exists(full_name) and  fname == "crime_in_seoul.csv":
             this.crime = self.create_matrix(fname)
             this = self.update_crime(this) 
-            this.crime.to_csv(os.path.join(save_dir, fname), index=False)
+            this.crime.to_csv(full_name, index=False)
 
-        elif os.path.exists(fname) and  fname == "pop_in_seoul.xls":
+        elif not os.path.exists(full_name) and  fname == "pop_in_seoul.xls":
             this.pop = self.create_matrix(fname)
             this = self.update_pop(this)
-            this.pop.to_csv(os.path.join(save_dir, fname), index=False)
+            this.pop.to_csv(full_name, index=False)
 
         else:
             print(f"파일이 이미 존재합니다. {fname}")
