@@ -53,7 +53,7 @@ class CrimeService:
         elif not os.path.exists(full_name) and  fname == "pop_in_seoul.xls":
             this.pop = self.create_matrix(fname)
             this = self.update_pop(this)
-            this.pop.to_csv(full_name, index=False)
+            this.pop.to_csv(os.path.join(save_dir, "pop_in_seoul.csv"), index=False)
 
         else:
             print(f"파일이 이미 존재합니다. {fname}")
